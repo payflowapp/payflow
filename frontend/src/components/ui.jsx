@@ -1,13 +1,14 @@
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export function formatCurrency(value) {
   const amount = Number(value || 0);
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(amount);
 }
 
@@ -19,7 +20,7 @@ export function formatDate(value) {
     month: "short",
     day: "2-digit",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
   }).format(date);
 }
 
@@ -45,7 +46,11 @@ export function Reveal({ children, className = "" }) {
       className={className}
       variants={{
         hidden: { opacity: 0, y: 16 },
-        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 24 } }
+        show: {
+          opacity: 1,
+          y: 0,
+          transition: { type: "spring", stiffness: 260, damping: 24 },
+        },
       }}
     >
       {children}
@@ -68,7 +73,11 @@ export function PageFade({ children, className = "" }) {
 }
 
 /* Animated number that counts up to its value */
-export function Counter({ value, format = (n) => Math.round(n).toLocaleString(), className = "" }) {
+export function Counter({
+  value,
+  format = (n) => Math.round(n).toLocaleString(),
+  className = "",
+}) {
   const mv = useMotionValue(0);
   const rounded = useTransform(mv, (latest) => format(latest));
   const [text, setText] = useState(format(0));
@@ -76,7 +85,7 @@ export function Counter({ value, format = (n) => Math.round(n).toLocaleString(),
   useEffect(() => {
     const controls = animate(mv, Number(value) || 0, {
       duration: 1.1,
-      ease: [0.16, 1, 0.3, 1]
+      ease: [0.16, 1, 0.3, 1],
     });
     const unsub = rounded.on("change", (v) => setText(v));
     return () => {
@@ -97,7 +106,7 @@ export function MoneyCounter({ value, className = "" }) {
         new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         }).format(n)
       }
     />
@@ -113,7 +122,7 @@ const tileTones = {
   mint: "bg-mint text-bg border border-mint",
   sky: "bg-sky text-bg border border-sky",
   lavender: "bg-lavender text-bg border border-lavender",
-  dark: "bg-bg text-ink border border-line"
+  dark: "bg-bg text-ink border border-line",
 };
 
 /* Card with hover lift */
@@ -131,7 +140,12 @@ export function Card({ children, className = "", hover = false, ...rest }) {
 }
 
 /* Colored bento tile */
-export function Bento({ tone = "surface", className = "", children, hover = true }) {
+export function Bento({
+  tone = "surface",
+  className = "",
+  children,
+  hover = true,
+}) {
   return (
     <motion.div
       whileHover={hover ? { y: -4 } : undefined}
@@ -143,13 +157,19 @@ export function Bento({ tone = "surface", className = "", children, hover = true
   );
 }
 
-export function Button({ variant = "primary", className = "", children, ...rest }) {
+export function Button({
+  variant = "primary",
+  className = "",
+  children,
+  ...rest
+}) {
   const variants = {
     primary: "bg-lime text-bg shadow-lime hover:bg-lime-dim",
     dark: "bg-surface-2 text-ink border border-line hover:bg-surface-3",
     coral: "bg-coral text-bg hover:brightness-95",
-    outline: "bg-transparent text-ink border border-line hover:border-lime hover:text-lime",
-    ghost: "bg-transparent text-ink-muted hover:bg-surface-2 hover:text-ink"
+    outline:
+      "bg-transparent text-ink border border-line hover:border-lime hover:text-lime",
+    ghost: "bg-transparent text-ink-muted hover:bg-surface-2 hover:text-ink",
   };
   return (
     <motion.button
@@ -170,10 +190,12 @@ export function Badge({ tone = "lime", className = "", children }) {
     coral: "bg-coral/15 text-coral border border-coral/30",
     sky: "bg-sky/15 text-sky border border-sky/30",
     lavender: "bg-lavender/15 text-lavender border border-lavender/30",
-    muted: "bg-surface-2 text-ink-muted border border-line"
+    muted: "bg-surface-2 text-ink-muted border border-line",
   };
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${tones[tone]} ${className}`}>
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${tones[tone]} ${className}`}
+    >
       {children}
     </span>
   );
@@ -184,7 +206,9 @@ export function SectionHeading({ title, subtitle, action }) {
     <div className="flex flex-wrap items-end justify-between gap-3">
       <div>
         <h2 className="text-xl font-bold tracking-tight text-ink">{title}</h2>
-        {subtitle ? <p className="mt-1 text-sm font-medium text-ink-muted">{subtitle}</p> : null}
+        {subtitle ? (
+          <p className="mt-1 text-sm font-medium text-ink-muted">{subtitle}</p>
+        ) : null}
       </div>
       {action}
     </div>
@@ -194,7 +218,11 @@ export function SectionHeading({ title, subtitle, action }) {
 export function Field({ label, icon: Icon, className = "", ...rest }) {
   return (
     <label className="block">
-      {label ? <span className="mb-1.5 block text-sm font-semibold text-ink">{label}</span> : null}
+      {label ? (
+        <span className="mb-1.5 block text-sm font-semibold text-ink">
+          {label}
+        </span>
+      ) : null}
       <div className="flex items-center gap-2.5 rounded-2xl border border-line bg-surface-2 px-3.5 py-3 transition-all duration-200 focus-within:border-lime focus-within:ring-4 focus-within:ring-lime/15">
         {Icon ? <Icon className="h-4 w-4 text-ink-faint" /> : null}
         <input
@@ -206,11 +234,21 @@ export function Field({ label, icon: Icon, className = "", ...rest }) {
   );
 }
 
-export function EmptyState({ title, description }) {
+export function EmptyState({ title, description, showCTA = false }) {
   return (
     <div className="rounded-2xl border border-dashed border-line bg-surface-2 px-5 py-12 text-center">
       <p className="text-sm font-bold text-ink">{title}</p>
       <p className="mt-2 text-sm font-medium text-ink-muted">{description}</p>
+
+      {showCTA && (
+        <Link
+          to="/transfer"
+          // className="mt-6 inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2 text-sm font-bold text-white hover:opacity-90"
+          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-lime px-5 py-3 text-sm font-bold text-black hover:opacity-90"
+        >
+          Send your first payment
+        </Link>
+      )}
     </div>
   );
 }
@@ -219,7 +257,7 @@ export function InlineNotice({ kind = "info", children }) {
   const kindClasses = {
     info: "border-sky/30 bg-sky/10 text-sky",
     error: "border-coral/30 bg-coral/10 text-coral",
-    success: "border-mint/30 bg-mint/10 text-mint"
+    success: "border-mint/30 bg-mint/10 text-mint",
   };
   return (
     <motion.div
