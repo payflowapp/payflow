@@ -5,6 +5,7 @@ import Signup from "./pages/Signup.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Transfer from "./pages/Transfer.jsx";
 import Transactions from "./pages/Transactions.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -33,15 +34,8 @@ export default function App() {
         <Route path="transfer" element={<Transfer />} />
         <Route path="transactions" element={<Transactions />} />
       </Route>
-      <Route
-        path="*"
-        element={
-          <Navigate
-            to={localStorage.getItem("token") ? "/dashboard" : "/login"}
-            replace
-          />
-        }
-      />
+      
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
