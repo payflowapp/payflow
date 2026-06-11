@@ -49,6 +49,16 @@ export async function login(email, password) {
   });
 }
 
+export async function register(name, email, password) {
+  return request("/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ name, email, password })
+  });
+}
+
 export async function getProfile() {
   return request("/auth/me", {
     headers: authHeaders()

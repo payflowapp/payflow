@@ -17,14 +17,22 @@ function getAllowedOrigins() {
     .filter(Boolean);
 }
 
+// Any localhost / 127.0.0.1 origin on any port is allowed in addition to the
+// configured list, so Vite picking a different dev port never breaks the app.
+const LOCAL_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+
 function createApp() {
   const app = express();
   const allowedOrigins = getAllowedOrigins();
 
+  function isAllowedOrigin(origin) {
+    return allowedOrigins.includes(origin) || LOCAL_ORIGIN.test(origin);
+  }
+
   app.use((req, res, next) => {
     const origin = req.headers.origin;
 
-    if (origin && allowedOrigins.includes(origin)) {
+    if (origin && isAllowedOrigin(origin)) {
       res.setHeader("Access-Control-Allow-Origin", origin);
       res.setHeader("Vary", "Origin");
     }
@@ -54,7 +62,7 @@ function createApp() {
   app.get("/", (req, res) => {
     res.json({
       message: "Payflow API running",
-      storage: "local-json"
+      storage: process.env.DATABASE_URL ? "postgres" : "local-json"
     });
   });
 

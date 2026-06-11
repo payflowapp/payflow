@@ -1,11 +1,12 @@
 import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { EmptyState, formatCurrency, formatDate, LoadingPulse } from "./ui.jsx";
 
 export default function TransactionList({ transactions = [], isLoading = false }) {
   if (isLoading) {
     return (
-      <div className="rounded-xl border border-line bg-panel-2/50 p-5">
+      <div className="rounded-2xl border border-line bg-surface-2 p-5">
         <LoadingPulse label="Loading transactions" />
       </div>
     );
@@ -21,48 +22,54 @@ export default function TransactionList({ transactions = [], isLoading = false }
   }
 
   return (
-    <div className="space-y-2">
+    <motion.div
+      className="space-y-2.5"
+      initial="hidden"
+      animate="show"
+      variants={{ show: { transition: { staggerChildren: 0.05 } } }}
+    >
       {transactions.map((transaction) => {
         const incoming = transaction.direction === "incoming";
         const Icon = incoming ? ArrowDownLeft : ArrowUpRight;
 
         return (
-          <div
+          <motion.div
             key={transaction.id}
-            className="flex items-center gap-4 rounded-xl border border-line bg-panel-2/40 px-4 py-3 transition hover:border-brand/30"
+            variants={{
+              hidden: { opacity: 0, y: 12 },
+              show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 280, damping: 24 } }
+            }}
+            whileHover={{ y: -2 }}
+            className="flex items-center gap-4 rounded-2xl border border-line bg-surface-2 px-4 py-3 transition-colors hover:border-line hover:bg-surface-3"
           >
             <div
-              className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${
-                incoming ? "bg-brand/15 text-brand" : "bg-white/5 text-slate-300"
+              className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${
+                incoming ? "bg-mint/15 text-mint" : "bg-surface-3 text-ink-muted"
               }`}
             >
-              <Icon className="h-[18px] w-[18px]" />
+              <Icon className="h-5 w-5" />
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-white">
+              <p className="truncate text-sm font-bold text-ink">
                 {transaction.counterparty?.name || "Unknown user"}
               </p>
-              <p className="truncate text-xs text-slate-500">
+              <p className="truncate text-xs font-medium text-ink-muted">
                 {transaction.counterparty?.email || "Unavailable"}
               </p>
             </div>
 
-            <div className="hidden text-xs text-slate-500 sm:block">
+            <div className="hidden text-xs font-medium text-ink-faint sm:block">
               {formatDate(transaction.createdAt)}
             </div>
 
-            <div
-              className={`shrink-0 text-sm font-semibold ${
-                incoming ? "text-brand" : "text-slate-200"
-              }`}
-            >
+            <div className={`shrink-0 text-sm font-extrabold ${incoming ? "text-mint" : "text-ink"}`}>
               {incoming ? "+" : "-"}
               {formatCurrency(transaction.amount)}
             </div>
-          </div>
+          </motion.div>
         );
       })}
-    </div>
+    </motion.div>
   );
 }

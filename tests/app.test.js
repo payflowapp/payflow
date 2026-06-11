@@ -1,5 +1,11 @@
+const os = require("os");
+const path = require("path");
+
+// Tests run against the isolated JSON store, never a real database.
+// Setting DATABASE_URL empty here prevents dotenv from enabling Postgres.
+process.env.DATABASE_URL = "";
 process.env.JWT_SECRET = process.env.JWT_SECRET || "test-secret";
-process.env.DATA_FILE = "C:/Users/BUY-PC COMPUTERS/payflow-api/data/payflow-test.json";
+process.env.DATA_FILE = path.join(os.tmpdir(), "payflow-test.json");
 
 const fs = require("fs/promises");
 

@@ -1,52 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #070b0c;
-  --color-panel: #0e1517;
-  --color-panel-2: #121b1e;
-  --color-line: #1c2a2d;
-  --color-brand: #2dd4bf;
-  --color-brand-strong: #14b8a6;
+  /* Surfaces — dark neobank base */
+  --color-bg: #0A0A0C;
+  --color-surface: #141417;
+  --color-surface-2: #1C1C21;
+  --color-surface-3: #25252C;
+  --color-line: #2C2C34;
+  --color-line-soft: #232329;
+
+  /* Lime — primary accent */
+  --color-lime: #CCFB50;
+  --color-lime-dim: #B6E63E;
+  --color-lime-glow: rgba(204, 251, 80, 0.25);
+
+  /* Light card (for contrast tiles) */
+  --color-cream: #F4F4EF;
+  --color-cream-ink: #15151A;
+
+  /* Secondary accents */
+  --color-coral: #FF6B5E;
+  --color-mint: #74E3A3;
+  --color-sky: #7FB4FF;
+  --color-lavender: #C4B5FD;
+  --color-violet: #8B5CF6;
+
+  /* Ink */
+  --color-ink: #F5F5F7;
+  --color-ink-muted: #9A9AA6;
+  --color-ink-faint: #6A6A76;
+
+  /* Status */
+  --color-ok: #74E3A3;
+  --color-warn: #FBBF24;
+  --color-danger: #FF6B5E;
+
+  /* Typography */
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  /* Shadows + lime glow */
+  --shadow-soft: 0 4px 14px 0 rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 16px 40px 0 rgba(0, 0, 0, 0.40);
+  --shadow-card-lg: 0 28px 70px 0 rgba(0, 0, 0, 0.50);
+  --shadow-lime: 0 12px 30px 0 rgba(204, 251, 80, 0.20);
+
+  /* Animations */
+  --animate-fade-up: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-in: fadeIn 0.35s ease both;
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-float-slow: floatSlow 6s ease-in-out infinite;
+  --animate-pop: pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-pulse-glow: pulseGlow 2.6s ease-in-out infinite;
+  --animate-marquee: marquee 26s linear infinite;
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(18px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(3deg); }
+}
+@keyframes pop {
+  0% { transform: scale(0.92); }
+  60% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+@keyframes shimmer {
+  0% { background-position: -460px 0; }
+  100% { background-position: 460px 0; }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(204, 251, 80, 0.0); }
+  50% { box-shadow: 0 0 0 8px rgba(204, 251, 80, 0.06); }
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 @layer base {
   html {
-    background: var(--color-ink);
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     margin: 0;
     min-height: 100vh;
-    font-family:
-      Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-      sans-serif;
-    background:
-      radial-gradient(1100px 600px at 85% -5%, rgba(45, 212, 191, 0.16), transparent 60%),
-      radial-gradient(900px 500px at 10% 110%, rgba(20, 184, 166, 0.08), transparent 55%),
-      var(--color-ink);
-    background-attachment: fixed;
-    color: #e6edec;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    font-family: var(--font-body);
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    line-height: 1.6;
   }
 
-  * {
-    box-sizing: border-box;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
   }
 
-  a {
-    color: inherit;
-    text-decoration: none;
+  * { box-sizing: border-box; }
+  a { color: inherit; text-decoration: none; }
+  button, input, textarea, select { font: inherit; }
+
+  button, a, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
   }
 
-  button,
-  input,
-  textarea,
-  select {
-    font: inherit;
+  *:focus-visible {
+    outline: 2.5px solid var(--color-lime);
+    outline-offset: 2px;
+    border-radius: 8px;
   }
 
-  ::placeholder {
-    color: #5b6b6c;
+  ::selection {
+    background: var(--color-lime);
+    color: var(--color-bg);
   }
+
+  /* Dark scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--color-bg); }
+  ::-webkit-scrollbar-thumb { background: var(--color-surface-3); border-radius: 999px; border: 2px solid var(--color-bg); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-line); }
 }

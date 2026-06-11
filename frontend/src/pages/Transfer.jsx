@@ -1,11 +1,14 @@
-import { Mail, SendHorizontal } from "lucide-react";
+import { Mail, SendHorizontal, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 import {
+  Button,
+  Card,
+  Field,
   InlineNotice,
   PageFade,
   SectionHeading,
-  Surface,
   formatCurrency
 } from "../components/ui.jsx";
 import { transferMoney } from "../services/api.js";
@@ -23,57 +26,50 @@ export default function Transfer() {
     e.preventDefault();
     setNotice(null);
     setIsSubmitting(true);
-
     const data = await transferMoney(recipientEmail, amount);
     setIsSubmitting(false);
-
     if (data.message) {
-      setNotice({ kind: "success", text: data.message });
+      setNotice({ kind: "success", text: `Sent ${formatCurrency(amount)} to ${recipientEmail}.` });
       return;
     }
-
     setNotice({ kind: "error", text: data.error || "Transfer failed" });
   }
 
   return (
-    <PageFade className="space-y-6">
+    <PageFade className="space-y-6 pb-24 lg:pb-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-white">Send money</h1>
-        <p className="mt-1 text-sm text-slate-400">
-          Transfer funds to another demo account by email.
+        <h1 className="font-display text-3xl font-bold tracking-tight text-ink">Send money</h1>
+        <p className="mt-1 text-sm font-medium text-ink-muted">
+          Transfer funds to another account by email.
         </p>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-        <Surface className="p-6">
+        <Card className="p-6">
           <form className="space-y-5" onSubmit={handleTransfer}>
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-300">From</span>
-              <div className="rounded-xl border border-line bg-panel-2/60 px-4 py-3 text-sm text-slate-400">
+            <div>
+              <span className="mb-1.5 block text-sm font-semibold text-ink">From</span>
+              <div className="rounded-2xl border border-line bg-surface-2 px-4 py-3 text-sm font-semibold text-ink-muted">
                 {senderEmail}
               </div>
-            </label>
+            </div>
 
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-300">Recipient email</span>
-              <div className="flex items-center gap-2.5 rounded-xl border border-line bg-panel-2 px-3.5 py-3 focus-within:border-brand/60">
-                <Mail className="h-4 w-4 text-slate-500" />
-                <input
-                  className="w-full border-0 bg-transparent text-sm text-white outline-none"
-                  value={recipientEmail}
-                  onChange={(e) => setRecipientEmail(e.target.value)}
-                  placeholder="maya@payflow.local"
-                  required
-                />
-              </div>
-            </label>
+            <Field
+              label="Recipient email"
+              icon={Mail}
+              type="email"
+              value={recipientEmail}
+              onChange={(e) => setRecipientEmail(e.target.value)}
+              placeholder="maya@payflow.local"
+              required
+            />
 
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-300">Amount</span>
-              <div className="flex items-baseline gap-1 rounded-xl border border-line bg-panel-2 px-4 py-3 focus-within:border-brand/60">
-                <span className="text-2xl font-semibold text-slate-500">$</span>
+            <div>
+              <span className="mb-1.5 block text-sm font-semibold text-ink">Amount</span>
+              <div className="flex items-baseline gap-1 rounded-2xl border border-line bg-surface-2 px-4 py-3 focus-within:border-lime focus-within:ring-4 focus-within:ring-lime/15">
+                <span className="font-display text-3xl font-bold text-ink-faint">$</span>
                 <input
-                  className="w-full border-0 bg-transparent text-2xl font-semibold text-white outline-none"
+                  className="w-full border-0 bg-transparent font-display text-3xl font-bold text-ink outline-none"
                   type="number"
                   min="1"
                   step="1"
@@ -82,55 +78,51 @@ export default function Transfer() {
                   required
                 />
               </div>
-            </label>
+            </div>
 
             <div className="flex flex-wrap gap-2">
               {quickAmounts.map((value) => (
-                <button
+                <motion.button
                   key={value}
                   type="button"
+                  whileTap={{ scale: 0.94 }}
                   onClick={() => setAmount(String(value))}
-                  className="rounded-full border border-line px-3.5 py-1.5 text-sm font-medium text-slate-300 transition hover:border-brand/50 hover:text-brand"
+                  className={`rounded-full border px-4 py-1.5 text-sm font-bold transition-colors ${
+                    String(value) === amount
+                      ? "border-lime bg-lime/10 text-lime"
+                      : "border-line bg-surface-2 text-ink-muted hover:border-lime hover:text-lime"
+                  }`}
                 >
                   {formatCurrency(value)}
-                </button>
+                </motion.button>
               ))}
             </div>
 
             {notice ? <InlineNotice kind={notice.kind}>{notice.text}</InlineNotice> : null}
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-ink transition hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-60"
-            >
+            <Button type="submit" variant="primary" disabled={isSubmitting} className="w-full py-3">
               <SendHorizontal className="h-4 w-4" />
-              {isSubmitting ? "Sending..." : "Send transfer"}
-            </button>
+              {isSubmitting ? "Sending…" : "Send transfer"}
+            </Button>
           </form>
-        </Surface>
+        </Card>
 
-        <Surface className="p-6">
+        <Card className="p-6">
           <SectionHeading title="How transfers work" />
-          <ul className="mt-4 space-y-3 text-sm text-slate-400">
-            <li className="flex gap-2.5">
-              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-              The sender is taken from your signed-in session.
-            </li>
-            <li className="flex gap-2.5">
-              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-              Recipients are selected by email, no internal IDs needed.
-            </li>
-            <li className="flex gap-2.5">
-              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-              Balances and history are stored in a local JSON file.
-            </li>
-            <li className="flex gap-2.5">
-              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-              Run <code className="rounded bg-panel-2 px-1.5 py-0.5 text-xs text-brand">npm run seed</code> to reset demo data.
-            </li>
+          <ul className="mt-4 space-y-3 text-sm font-medium text-ink-muted">
+            {[
+              "The sender is taken from your signed-in session.",
+              "Recipients are selected by email — no internal IDs needed.",
+              "Balances and history update instantly.",
+              "Self-transfers and over-balance sends are blocked."
+            ].map((line) => (
+              <li key={line} className="flex gap-2.5">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-lime" />
+                {line}
+              </li>
+            ))}
           </ul>
-        </Surface>
+        </Card>
       </div>
     </PageFade>
   );

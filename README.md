@@ -1,11 +1,11 @@
 # Payflow
 
-Payflow is a local-first wallet transfer app with an Express API and a Vite/React frontend. It is designed to be easy to run, easy to review, and easy for outside contributors to understand without needing any hosted database or third-party infrastructure.
+Payflow is a wallet transfer app with an Express API and a Vite/React frontend. It runs with zero setup locally (a JSON data store, no database needed) and switches to Postgres automatically when a `DATABASE_URL` is provided — so the same code works for quick local review and for a real deployment where accounts persist.
 
 ## Stack
 
 - Node.js + Express
-- Local JSON data store
+- Postgres when `DATABASE_URL` is set, local JSON store otherwise
 - React + Vite
 - Jest + Supertest
 
@@ -26,12 +26,12 @@ Payflow is a local-first wallet transfer app with an Express API and a Vite/Reac
 - `.github/` issue templates, PR template, and CI
 - `docs/` maintainer notes and Wave issue ideas
 
-## Why this repo is local-first
+## Why this repo is easy to run
 
-- no MongoDB
+- no database required to get started — falls back to a local JSON store
 - no Docker required
-- no cloud service setup
 - contributor can run everything with terminal commands only
+- add a `DATABASE_URL` (e.g. a free Neon Postgres) when you want persistent accounts
 
 That makes it a better fit for review programs and newcomer-friendly open source contribution.
 
@@ -49,7 +49,7 @@ npm install
 
 Copy `.env.example` to `.env`.
 
-Minimal local example:
+Minimal local example (JSON store, no database):
 
 ```env
 PORT=5000
@@ -57,13 +57,21 @@ JWT_SECRET=your-local-secret
 CLIENT_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
-### 3. Reset local demo data
+To use Postgres instead (persistent accounts), also set:
+
+```env
+DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
+```
+
+When `DATABASE_URL` is present the API creates its tables automatically on first run.
+
+### 3. Reset demo data
 
 ```bash
 npm run seed
 ```
 
-This writes a fresh local data file and restores demo accounts:
+This resets the data store (JSON file or Postgres, whichever is configured) and restores demo accounts:
 
 - `alex@payflow.local`
 - `maya@payflow.local`
@@ -123,11 +131,12 @@ All wallet and transaction routes require `Authorization: Bearer <token>`.
 
 ## Data model
 
-The backend persists to a local JSON file, by default:
+The backend stores users, wallets, and transactions in one of two interchangeable backends:
 
-- `data/payflow.json`
+- **Postgres** — used when `DATABASE_URL` is set. Tables are created automatically.
+- **Local JSON** — the default fallback, written to `data/payflow.json`. Override the path with `DATA_FILE` in `.env`.
 
-You can override that path with `DATA_FILE` in `.env` if needed.
+Transfers run as a single atomic operation (a locked DB transaction on Postgres), so balances stay consistent.
 
 ## Security notes
 
