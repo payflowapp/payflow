@@ -65,6 +65,20 @@ DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
 
 When `DATABASE_URL` is present the API creates its tables automatically on first run.
 
+## Environment variables
+
+The backend reads variables from the root `.env` file. The frontend reads Vite
+variables from `frontend/.env` when you need to override the default API URL.
+
+| Variable | Used by | Required? | Default behavior | Example |
+| --- | --- | --- | --- | --- |
+| `PORT` | Backend | No | Uses `5000` when unset. | `5000` |
+| `JWT_SECRET` | Backend | Yes | No safe default; token signing and verification require a value. | `replace-with-a-local-dev-secret` |
+| `CLIENT_ORIGINS` | Backend | No | Allows `http://localhost:5173` and `http://127.0.0.1:5173`; any localhost or `127.0.0.1` origin is also allowed for local Vite ports. | `http://localhost:5173,http://127.0.0.1:5173` |
+| `DATABASE_URL` | Backend | No | Uses the local JSON store when unset. | `postgresql://user:password@host/dbname?sslmode=require` |
+| `DATA_FILE` | Backend | No | Writes the local JSON store to `data/payflow.json`. | `data/payflow.json` |
+| `VITE_API_URL` | Frontend | No | Calls `http://localhost:5000` when unset. | `http://localhost:5000` |
+
 ### 3. Reset demo data
 
 ```bash
