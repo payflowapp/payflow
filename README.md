@@ -96,6 +96,79 @@ npm run dev
 
 The frontend expects the API at `http://localhost:5000` unless `VITE_API_URL` is set.
 
+## Troubleshooting
+
+### Port 5000 is already in use
+
+The backend listens on port `5000` by default. If `npm run dev` fails because
+the port is busy, either stop the process using that port or run Payflow on a
+different port:
+
+```bash
+PORT=5001 npm run dev
+```
+
+When you change the backend port, point the frontend at the same API URL:
+
+```bash
+cd frontend
+VITE_API_URL=http://localhost:5001 npm run dev
+```
+
+### Port 5173 is already in use
+
+The frontend starts Vite on port `5173` by default. If that port is busy, Vite
+prints the alternate port it selected. Use that URL in the browser, or choose a
+specific port:
+
+```bash
+cd frontend
+npm run dev -- --port 5174
+```
+
+### CORS errors in the browser
+
+Localhost and `127.0.0.1` origins are allowed automatically. If you are testing
+from another host name, add it to `CLIENT_ORIGINS` in the root `.env` file and
+restart the backend:
+
+```env
+CLIENT_ORIGINS=http://localhost:5173,http://127.0.0.1:5173,http://payflow.local:5173
+```
+
+```bash
+npm run dev
+```
+
+### `Invalid token` after changing `.env`
+
+JWTs are signed with `JWT_SECRET`. If you change `JWT_SECRET`, old browser
+tokens can no longer be verified and authenticated routes return
+`Invalid token`. Clear the saved token, then sign in again:
+
+```js
+localStorage.removeItem("token")
+```
+
+You can run that command in the browser devtools console for the frontend page.
+
+### Database connection failures
+
+When `DATABASE_URL` is set, Payflow uses Postgres and creates tables on startup.
+If startup fails with a database connection error, check the connection string
+or temporarily remove `DATABASE_URL` to fall back to the local JSON store:
+
+```bash
+# root .env
+# DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
+```
+
+Then reset the local demo data:
+
+```bash
+npm run seed
+```
+
 ## Scripts
 
 ### Root
