@@ -26,6 +26,29 @@ Payflow is a wallet transfer app with an Express API and a Vite/React frontend. 
 - `.github/` issue templates, PR template, and CI
 - `docs/` maintainer notes and Wave issue ideas
 
+## Architecture
+
+The backend is a small Express app where `src/app.js` wires middleware and mounts
+feature routes. A typical API request moves through this path:
+
+```text
+route → controller → service → model → store
+```
+
+- Routes in `src/routes/` define the HTTP endpoints and attach request
+  middleware.
+- Controllers in `src/controllers/` adapt request bodies, authenticated user
+  data, and model responses to JSON API responses.
+- Services in `src/services/` hold business operations such as transfers that
+  need validation, balance updates, and transaction records.
+- Models in `src/models/` expose user, wallet, and transaction operations.
+- The store layer in `src/lib/store.js` uses the local JSON file by default,
+  while `src/lib/db.js` and the SQL-backed model paths are used when
+  `DATABASE_URL` is present.
+
+That dual storage mode keeps the same route/controller/service shape for quick
+local review and for Postgres-backed deployments.
+
 ## Why this repo is easy to run
 
 - no database required to get started — falls back to a local JSON store
