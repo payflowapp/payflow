@@ -34,7 +34,7 @@ async function request(path, options = {}) {
     return data;
   } catch (err) {
     return {
-      error: "Could not connect to the local Payflow API on port 5000."
+      error: "Could not reach the Payflow API. Please check your connection and try again."
     };
   }
 }
