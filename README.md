@@ -127,6 +127,66 @@ The frontend expects the API at `http://localhost:5000` unless `VITE_API_URL` is
 - `npm run dev` start Vite dev server
 - `npm run build` build production assets
 
+## Troubleshooting / FAQ
+
+### Port 5000 or 5173 is already in use
+
+Stop the process using the port, then restart the affected dev server:
+
+```bash
+lsof -ti :5000 | xargs kill
+lsof -ti :5173 | xargs kill
+```
+
+If you intentionally run the API on another port, update `PORT` in `.env` and
+point the frontend at it with `VITE_API_URL`, for example
+`VITE_API_URL=http://localhost:5001`.
+
+### The frontend shows CORS errors
+
+Make sure the backend is running before the frontend:
+
+```bash
+npm run dev
+```
+
+Then confirm `.env` includes the frontend origin you are using:
+
+```env
+CLIENT_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+```
+
+For a custom Vite port, add that origin to `CLIENT_ORIGINS` or set
+`VITE_API_URL` to the API URL the browser should call.
+
+### Requests fail with `Invalid token`
+
+This usually means the browser still has an old JWT after changing
+`JWT_SECRET`, reseeding data, or switching environments. Clear local storage,
+then sign in again with one of the seeded demo accounts:
+
+```javascript
+localStorage.clear();
+```
+
+You can run that command in the browser devtools console, or use the app's
+logout flow before signing in again.
+
+### Database connection fails on startup
+
+If you do not need Postgres locally, remove or comment out `DATABASE_URL` in
+`.env` and use the default JSON store:
+
+```bash
+npm run seed
+npm run dev
+```
+
+If you do want Postgres, verify the connection string with your provider,
+including username, password, database name, host, and `sslmode=require` when
+required. The API creates tables automatically after a valid `DATABASE_URL`
+connects.
+
 ## API summary
 
 ### Auth
