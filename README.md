@@ -6,6 +6,19 @@
 
 Payflow is a wallet transfer app with an Express API and a Vite/React frontend. It runs with zero setup locally (a JSON data store, no database needed) and switches to Postgres automatically when a `DATABASE_URL` is provided — so the same code works for quick local review and for a real deployment where accounts persist.
 
+## Contents
+
+- [Stack](#stack)
+- [What the app does](#what-the-app-does)
+- [Repo layout](#repo-layout)
+- [Why this repo is easy to run](#why-this-repo-is-easy-to-run)
+- [Local setup](#local-setup)
+- [Scripts](#scripts)
+- [API summary](#api-summary)
+- [Data model](#data-model)
+- [Security notes](#security-notes)
+- [Contribution flow](#contribution-flow)
+
 ## Stack
 
 - Node.js + Express
