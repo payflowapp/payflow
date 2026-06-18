@@ -1,5 +1,9 @@
 # Payflow
 
+> **Move money, move forward.**
+>
+> 🔗 Live demo: [payflowapp.vercel.app](https://payflowapp.vercel.app) · API: [payflow-8ohe.onrender.com](https://payflow-8ohe.onrender.com)
+
 Payflow is a wallet transfer app with an Express API and a Vite/React frontend. It runs with zero setup locally (a JSON data store, no database needed) and switches to Postgres automatically when a `DATABASE_URL` is provided — so the same code works for quick local review and for a real deployment where accounts persist.
 
 ## Stack
