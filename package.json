@@ -25,6 +25,9 @@
     "url": "https://github.com/payflowapp/payflow/issues"
   },
   "homepage": "https://payflowapp.vercel.app",
+  "engines": {
+    "node": ">=18"
+  },
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",
