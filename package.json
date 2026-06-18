@@ -17,6 +17,14 @@
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/payflowapp/payflow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/payflowapp/payflow/issues"
+  },
+  "homepage": "https://payflowapp.vercel.app",
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",
