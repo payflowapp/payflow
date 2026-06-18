@@ -90,13 +90,22 @@ npm run seed
 
 This resets the data store (JSON file or Postgres, whichever is configured) and restores demo accounts:
 
-- `alex@payflow.local`
-- `maya@payflow.local`
-- `sam@payflow.local`
+| Name | Email | Starting balance |
+|------|-------|------------------|
+| Alex Johnson | `alex@payflow.local` | `2450` |
+| Maya Chen | `maya@payflow.local` | `1325` |
+| Sam Rivera | `sam@payflow.local` | `880` |
 
 Shared demo password:
 
 - `12345678`
+
+The seed command uses the same storage mode as the app:
+
+- Without `DATABASE_URL`, it rewrites the local JSON store at `data/payflow.json` or the custom `DATA_FILE` path.
+- With `DATABASE_URL`, it truncates and re-seeds the Postgres `users`, `wallets`, and `transactions` tables.
+
+Do not run `npm run seed` against a real production `DATABASE_URL`; it wipes the existing Payflow data before inserting the demo records.
 
 ### 4. Run the backend
 
