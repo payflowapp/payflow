@@ -17,6 +17,7 @@ export default function TransactionList({ transactions = [], isLoading = false }
       <EmptyState
         title="No transactions yet"
         description="Your incoming and outgoing payments will appear here."
+        showCTA
       />
     );
   }
