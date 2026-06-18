@@ -157,10 +157,13 @@ Transfers run as a single atomic operation (a locked DB transaction on Postgres)
 
 ## Security notes
 
-- Passwords are hashed with `bcryptjs`
-- Transfer sender identity is derived from the signed JWT, not the request body
-- Balance and transaction reads are scoped to the authenticated user
-- Transfer validation uses recipient email and positive numeric amounts
+- Passwords are hashed with `bcryptjs` before they are stored.
+- Authenticated routes require `Authorization: Bearer <token>`. The middleware verifies the JWT with `JWT_SECRET` and attaches the decoded user id to the request.
+- Transfer sender identity is derived from the signed JWT, not the request body, so clients cannot choose another sender id.
+- Balance and transaction reads are scoped to the authenticated user.
+- Transfer validation uses recipient email and positive numeric amounts.
+- Never commit `.env`, `JWT_SECRET`, `DATABASE_URL`, or provider credentials. Keep local secrets in `.env` and production secrets in the deployment secret manager.
+- If `JWT_SECRET` or database credentials are exposed, rotate them immediately. After rotating `JWT_SECRET`, users must sign in again because old tokens will fail with `Invalid token`.
 
 ## Contribution flow
 
