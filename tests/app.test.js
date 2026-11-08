@@ -12,7 +12,8 @@ const fs = require("fs/promises");
 const jwt = require("jsonwebtoken");
 const request = require("supertest");
 
-const { createApp } = require("../src/app");
+const { createApp, startServer, gracefulShutdown } = require("../src/app");
+const { close: closeDb } = require("../src/lib/db");
 const { resetStore } = require("../src/lib/store");
 const Wallet = require("../src/models/Wallet");
 
@@ -155,5 +156,18 @@ describe("Payflow API", () => {
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body[0]).toHaveProperty("counterparty");
     expect(res.body[0]).toHaveProperty("direction");
+  });
+
+  test("gracefulShutdown closes running server and pool cleanly", async () => {
+    process.env.PORT = "0";
+    const server = await startServer();
+    expect(server.listening).toBe(true);
+
+    await expect(gracefulShutdown(server, "SIGTERM")).resolves.not.toThrow();
+    expect(server.listening).toBe(false);
+  });
+
+  test("gracefulShutdown handles already closed server safely", async () => {
+    await expect(gracefulShutdown(null, "SIGINT")).resolves.not.toThrow();
   });
 });
