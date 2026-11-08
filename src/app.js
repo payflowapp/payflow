@@ -3,6 +3,7 @@ require("dotenv").config({ quiet: true });
 const express = require("express");
 
 const { ensureStore } = require("./lib/store");
+const { close: closeDb } = require("./lib/db");
 const walletRoutes = require("./routes/WalletRoutes");
 const authRoutes = require("./routes/authRoutes");
 const transactionRoutes = require("./routes/TransactionRoutes");
@@ -73,15 +74,52 @@ function createApp() {
   return app;
 }
 
+async function gracefulShutdown(server, signal = "SIGTERM") {
+  return new Promise((resolve, reject) => {
+    const finish = async (err) => {
+      if (err) {
+        return reject(err);
+      }
+      try {
+        await closeDb();
+        resolve();
+      } catch (dbErr) {
+        reject(dbErr);
+      }
+    };
+
+    if (!server || !server.listening) {
+      return finish();
+    }
+
+    server.close(finish);
+  });
+}
+
 async function startServer() {
   const app = createApp();
-  const port = process.env.PORT || 5000;
+  const port = process.env.PORT !== undefined ? Number(process.env.PORT) : 5000;
 
   await ensureStore();
 
-  return app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Payflow API listening on http://localhost:${port}`);
   });
+
+  const shutdownHandler = async (signal) => {
+    try {
+      await gracefulShutdown(server, signal);
+      process.exit(0);
+    } catch (err) {
+      console.error(`Error during graceful shutdown on ${signal}:`, err);
+      process.exit(1);
+    }
+  };
+
+  process.once("SIGTERM", () => shutdownHandler("SIGTERM"));
+  process.once("SIGINT", () => shutdownHandler("SIGINT"));
+
+  return server;
 }
 
 if (require.main === module) {
@@ -93,5 +131,6 @@ if (require.main === module) {
 
 module.exports = {
   createApp,
-  startServer
+  startServer,
+  gracefulShutdown
 };
